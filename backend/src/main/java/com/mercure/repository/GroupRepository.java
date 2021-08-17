@@ -14,5 +14,6 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Integer> {
     @Query(value = "SELECT g.id FROM chat_group g WHERE g.url = :url", nativeQuery = true)
     int findGroupByUrl(@Param(value = "url") String url);
 
-    List<GroupEntity> findAllById(int id);
+    @Query(value = "SELECT g.name FROM chat_group g WHERE g.url = :url", nativeQuery = true)
+    String getGroupEntitiesBy(@Param(value = "url") String url);
 }

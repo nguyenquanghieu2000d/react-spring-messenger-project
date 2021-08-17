@@ -19,6 +19,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Query(value = "SELECT u.firstname FROM user u WHERE u.wstoken = :token", nativeQuery = true)
     String getUsernameWithWsToken(@Param(value = "token") String token);
 
+    @Query(value = "SELECT * FROM user u WHERE u.id NOT IN :ids", nativeQuery = true)
+    List<UserEntity> getAllUsersNotAlreadyInConversation(@Param(value = "ids") int[] ids);
+
     int countAllByFirstNameOrMail(String firstName, String mail);
 
     int countAllByShortUrl(String shortUrl);

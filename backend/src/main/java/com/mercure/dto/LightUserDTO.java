@@ -5,10 +5,10 @@ public class LightUserDTO {
     public LightUserDTO() {
     }
 
-    public LightUserDTO(int id, String firstName, String lastName) {
+    public LightUserDTO(int id, String firstName, String wsToken) {
         this.id = id;
         this.firstName = firstName;
-        this.lastName = lastName;
+        this.wsToken = wsToken;
     }
 
     public int id;

@@ -1,13 +1,10 @@
 import {connect} from 'react-redux'
 import {WebsocketGroupsComponent} from "../../components/websocket/websocket-groups-component";
-import {setCurrentActiveGroup} from "../../actions/webSocketActions";
+import {setCurrentActiveGroup} from "../../actions/websocket-actions";
 
 const mapStateToProps = (state) => {
-    const {isDarkModeToggled, currentThemeMode} = state.ThemeReducer;
-    const {isWsConnected, wsUserGroups,currentActiveGroup} = state.WebSocketReducer;
+    const {isWsConnected, wsUserGroups, currentActiveGroup} = state.WebSocketReducer;
     return {
-        isDarkModeToggled,
-        currentThemeMode,
         isWsConnected,
         currentActiveGroup,
         wsUserGroups

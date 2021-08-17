@@ -5,18 +5,12 @@ import {
     setCurrentActiveGroup,
     unsubscribeAll,
     wsHealthCheckConnected
-} from "../../actions/webSocketActions";
-import {initCallWebRTC} from "../../actions/webRtcActions";
+} from "../../actions/websocket-actions";
+import {initCallWebRTC} from "../../actions/web-rtc-actions";
 
 const mapStateToProps = (state) => {
-    const {isDarkModeToggled, currentThemeMode} = state.ThemeReducer;
-    const {isUserLoggedIn} = state.AuthReducer;
-    const {wsUserTokenValue, wsUserGroups, isWsConnected, currentActiveGroup} = state.WebSocketReducer;
+    const {wsUserGroups, isWsConnected, currentActiveGroup} = state.WebSocketReducer;
     return {
-        isDarkModeToggled,
-        currentThemeMode,
-        isUserLoggedIn,
-        wsUserTokenValue,
         isWsConnected,
         currentActiveGroup,
         wsUserGroups

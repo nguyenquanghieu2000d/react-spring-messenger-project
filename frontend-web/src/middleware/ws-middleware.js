@@ -10,9 +10,9 @@ import {
     SEND_GROUP_MESSAGE,
     ADD_CHAT_HISTORY,
     UNSUBSCRIBE_ALL,
-    MARK_MESSAGE_AS_SEEN
+    MARK_MESSAGE_AS_SEEN, GET_GROUP_MESSAGES
 } from "../utils/redux-constants";
-import {wsHealthCheckConnected} from "../actions/webSocketActions";
+import {wsHealthCheckConnected} from "../actions/websocket-actions";
 import {handleRTCActions, handleRTCSubscribeEvents} from "./webRTC-middleware";
 
 let userQueueReplySubscribe;
@@ -21,10 +21,10 @@ let topicCallReplySubscribe;
 let appGroupGetSubscribe;
 let topicGroupSubscribe;
 
-function initWsAndSubscribe(wsClient, store, wsUserTokenValue) {
-    const groupUrl = localStorage.getItem("_cAG");
-    const userId = store.getState().AuthReducer.userId;
-
+function initWsAndSubscribe(wsClient, store, reduxModel) {
+    const groupUrl = reduxModel.groupUrl;
+    const wsUserTokenValue = reduxModel.userToken;
+    const userId = reduxModel.userId;
     wsClient.onConnect = () => {
         store.dispatch(store.dispatch(wsHealthCheckConnected(true)))
 
@@ -49,11 +49,11 @@ function initWsAndSubscribe(wsClient, store, wsUserTokenValue) {
         });
 
         topicCallReplySubscribe = wsClient.publish({destination: "/app/message", body: wsUserTokenValue});
-        console.log("On récupère les messages du groupe actif")
-        store.dispatch({
-            type: FETCH_GROUP_MESSAGES,
-            payload: localStorage.getItem("_cAG")
-        })
+        // console.log("On récupère les messages du groupe actif")
+        // store.dispatch({
+        //     type: FETCH_GROUP_MESSAGES,
+        //     payload: localStorage.getItem("_cAG")
+        // })
     }
 
     wsClient.onWebSocketClose = () => {
@@ -66,44 +66,50 @@ function initWsAndSubscribe(wsClient, store, wsUserTokenValue) {
 const WsClientMiddleWare = () => {
     let wsClient = null;
 
-    return store => next => action => {
-        const groupUrl = localStorage.getItem("_cAG")
-        const userId = store.getState().AuthReducer.userId;
+    return (store) => (next) => (action) => {
         switch (action.type) {
             case INIT_WS_CONNECTION:
-                // console.log("Starting WS stomp")
                 if (action.payload === null) {
                     return next(action);
                 }
-                wsClient = action.payload.stomp;
-                const wsUserTokenValue = action.payload.token;
-                initWsAndSubscribe(wsClient, store, wsUserTokenValue);
+                wsClient = action.payload.client;
+                console.log(action.payload)
+                initWsAndSubscribe(wsClient, store, action.payload);
                 break;
-            case FETCH_GROUP_MESSAGES:
-                // console.log(groupUrl)
-
+            case GET_GROUP_MESSAGES:
                 if (wsClient !== null) {
-                    appGroupGetSubscribe = wsClient.subscribe("/app/groups/get/" + groupUrl, (res) => {
+                    appGroupGetSubscribe = wsClient.subscribe("/app/groups/get/" + action.payload, (res) => {
                         const data = JSON.parse(res.body);
+                        console.log(data)
                         store.dispatch({type: SET_CHAT_HISTORY, payload: data})
                     });
-
-                    topicGroupSubscribe = wsClient.subscribe("/topic/" + groupUrl, (res) => {
+                    topicGroupSubscribe = wsClient.subscribe("/topic/" + action.payload, (res) => {
                         const data = JSON.parse(res.body);
+                        console.log(data)
                         store.dispatch({type: ADD_CHAT_HISTORY, payload: data})
                     });
+                }
+                break;
+            case FETCH_GROUP_MESSAGES:
+                if (wsClient !== null) {
+                    // topicGroupSubscribe = wsClient.subscribe("/topic/" + action.payload.groupUrl || "", (res) => {
+                    //     const data = JSON.parse(res.body);
+                    //     console.log(data)
+                    //     store.dispatch({type: ADD_CHAT_HISTORY, payload: data})
+                    // });
                 }
                 break;
             case SEND_GROUP_MESSAGE:
                 if (wsClient !== null) {
                     wsClient.publish({
-                        destination: "/app/message/text/" + userId + "/group/" + groupUrl,
-                        body: JSON.stringify(action.payload)
+                        destination: "/app/message/text/" + action.payload.userId + "/group/" + action.payload.groupUrl,
+                        body: JSON.stringify(action.payload.message)
                     });
+                    console.log("TODO UPDATE MESSAGE")
                 }
                 break;
             case MARK_MESSAGE_AS_SEEN:
-                markMessageAsSeen(store, groupUrl)
+                markMessageAsSeen(store, action.payload.groupUrl || "")
                 break;
             case UNSUBSCRIBE_ALL:
                 if (wsClient !== null) {

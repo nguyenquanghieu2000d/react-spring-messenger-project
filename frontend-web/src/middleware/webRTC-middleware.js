@@ -1,10 +1,9 @@
-import {handleAnswer, handleOffer, handleRtCandidate} from "../actions/webRtcActions";
+import {handleAnswer, handleOffer, handleRtCandidate} from "../actions/web-rtc-actions";
 
 export function handleRTCSubscribeEvents(data, store) {
-    const userId = store.getState().AuthReducer.userId;
     console.log(data.type)
-    console.log("data.userIn !== userId ? ", data.name !== userId)
-    if (data.name !== userId) {
+    console.log("data.userIn !== userId ? ", data.name !== 5)
+    if (data.name !== 5) {
         if (data.type === "video-offer") {
             console.log("Receiving offer")
             store.dispatch(handleOffer(data.sdp))
@@ -22,7 +21,6 @@ export function handleRTCSubscribeEvents(data, store) {
 
 export function handleRTCActions(wsClient, store, payload) {
     const groupUrl = localStorage.getItem("_cAG");
-    const userId = store.getState().AuthReducer.userId;
     switch (payload.type) {
         case "init":
             // if (wsClient !== null) {
@@ -50,7 +48,7 @@ export function handleRTCActions(wsClient, store, payload) {
             if (wsClient !== null) {
                 console.log("Sending offer to server...")
                 wsClient.publish({
-                    destination: "/app/message/call/" + userId + "/group/" + groupUrl,
+                    destination: "/app/message/call/" + 5 + "/group/" + groupUrl,
                     body: JSON.stringify(payload)
                 });
             }
@@ -60,7 +58,7 @@ export function handleRTCActions(wsClient, store, payload) {
                 console.log(payload.event)
                 console.log("Sending answer to server...")
                 wsClient.publish({
-                    destination: "/app/message/call/" + userId + "/group/" + groupUrl,
+                    destination: "/app/message/call/" + 5 + "/group/" + groupUrl,
                     body: JSON.stringify(payload)
                 });
             }
@@ -70,7 +68,7 @@ export function handleRTCActions(wsClient, store, payload) {
                 console.log(payload.event)
                 console.log("Sending candidate to server...")
                 wsClient.publish({
-                    destination: "/app/message/call/" + userId + "/group/" + groupUrl,
+                    destination: "/app/message/call/" + 5 + "/group/" + groupUrl,
                     body: JSON.stringify(payload)
                 });
             }
@@ -78,17 +76,16 @@ export function handleRTCActions(wsClient, store, payload) {
         case "video-offer":
         case "new-ice-candidate":
             if (wsClient !== null) {
-                console.log(payload.type)
-                console.log(payload)
+                // console.log(payload.type)
+                // console.log(payload)
                 wsClient.publish({
-                    destination: "/app/message/call/" + userId + "/group/" + groupUrl,
+                    destination: "/app/message/call/" + 5 + "/group/" + groupUrl,
                     body: JSON.stringify(payload)
                 });
             }
             break;
         default:
-            console.log("ERROR NOTHING MATCH SWITCH STATEMENT");
-            console.log(payload)
+            console.log("ERROR NOTHING MATCH SWITCH STATEMENT : " + payload);
             break;
     }
 }

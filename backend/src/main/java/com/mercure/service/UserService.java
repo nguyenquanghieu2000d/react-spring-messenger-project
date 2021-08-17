@@ -1,5 +1,6 @@
 package com.mercure.service;
 
+import com.mercure.dto.GroupMemberDTO;
 import com.mercure.dto.LightUserDTO;
 import com.mercure.dto.UserDTO;
 import com.mercure.entity.GroupRoleKey;
@@ -45,10 +46,10 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
-    public List<LightUserDTO> fetchAllUsers() {
-        List<LightUserDTO> toSend = new ArrayList<>();
-        List<UserEntity> list = userRepository.findAll();
-        list.forEach(user -> toSend.add(new LightUserDTO(user.getId(), user.getFirstName(), user.getLastName())));
+    public List<GroupMemberDTO> fetchAllUsers(int[] ids) {
+        List<GroupMemberDTO> toSend = new ArrayList<>();
+        List<UserEntity> list = userRepository.getAllUsersNotAlreadyInConversation(ids);
+        list.forEach(user -> toSend.add(new GroupMemberDTO(user.getId(), user.getFirstName(), user.getLastName(), false)));
         return toSend;
     }
 

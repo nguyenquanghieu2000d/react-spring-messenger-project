@@ -1,8 +1,8 @@
 package com.mercure.controller;
 
 import com.mercure.dto.GroupMemberDTO;
-import com.mercure.dto.LightUserDTO;
 import com.mercure.entity.GroupEntity;
+import com.mercure.entity.GroupRoleKey;
 import com.mercure.entity.GroupUser;
 import com.mercure.entity.UserEntity;
 import com.mercure.mapper.GroupMapper;
@@ -25,6 +25,7 @@ import org.springframework.web.util.WebUtils;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin
@@ -51,23 +52,28 @@ public class ApiController {
     @Autowired
     private GroupUserMapper groupUserMapper;
 
-    @GetMapping(value = "/users/all")
-    public List<LightUserDTO> fetchAllUsers() {
-        return userService.fetchAllUsers();
+    @GetMapping(value = "/users/all/{groupUrl}")
+    public List<GroupMemberDTO> fetchAllUsersNotInGroup(@PathVariable String groupUrl) {
+        int groupId = groupService.findGroupByUrl(groupUrl);
+        GroupRoleKey groupRoleKey = new GroupRoleKey();
+        groupRoleKey.setGroupId(groupId);
+        List<GroupUser> groupUsers = groupUserJoinService.findAllByGroupId(groupId);
+        Object[] objects = groupUsers.stream().map(GroupUser::getUserId).toArray();
+        int[] ids = new int[objects.length];
+        for (int i = 0; i < objects.length; i++) {
+            ids[i] = (int) objects[i];
+        }
+        return userService.fetchAllUsers(ids);
     }
 
     /**
      * Fetch all users in a conversation
      *
-     * @param req string
+     * @param groupUrl string
      * @return List of {@link GroupMemberDTO}
-     * @throws ParseException if json is null
      */
-    @PostMapping(value = "/users/group/all")
-    public List<GroupMemberDTO> fetchAllUsers(@RequestBody String req) throws ParseException {
-        JSONParser jsonParser = new JSONParser();
-        JSONObject jsonObject = (JSONObject) jsonParser.parse(req);
-        String groupUrl = (String) jsonObject.get("groupUrl");
+    @GetMapping(value = "/users/group/{groupUrl}")
+    public List<GroupMemberDTO> fetchAllUsers(@PathVariable String groupUrl) {
         List<GroupMemberDTO> toSend = new ArrayList<>();
         int id = groupService.findGroupByUrl(groupUrl);
         Optional<GroupEntity> optionalGroupEntity = groupService.findById(id);
@@ -91,8 +97,8 @@ public class ApiController {
     public ResponseEntity<?> addUserToConversation(@PathVariable int userId, @PathVariable String groupUrl) {
         int groupId = groupService.findGroupByUrl(groupUrl);
         try {
-            groupService.addUserToConversation(userId, groupId);
-            return ResponseEntity.ok().build();
+            String addedUsername = groupService.addUserToConversation(userId, groupId);
+            return ResponseEntity.ok().body(addedUsername + " has been added to " + groupService.getGroupName(groupUrl));
         } catch (Exception e) {
             log.error("Error when trying to add user to conversation : {}", e.getMessage());
             return ResponseEntity.status(500).build();

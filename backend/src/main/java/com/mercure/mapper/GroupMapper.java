@@ -31,11 +31,6 @@ public class GroupMapper {
     }
 
     public GroupMemberDTO toGroupMemberDTO(GroupUser groupUser) {
-        GroupMemberDTO groupMemberDTO = new GroupMemberDTO();
-        groupMemberDTO.setFirstName(groupUser.getUserMapping().getFirstName());
-        groupMemberDTO.setLastName(groupUser.getUserMapping().getLastName());
-        groupMemberDTO.setUserId(groupUser.getUserMapping().getId());
-        groupMemberDTO.setAdmin(groupUser.getRole() == 1);
-        return groupMemberDTO;
+        return new GroupMemberDTO(groupUser.getUserMapping().getId(), groupUser.getUserMapping().getFirstName(), groupUser.getUserMapping().getLastName(), groupUser.getRole() == 1);
     }
 }

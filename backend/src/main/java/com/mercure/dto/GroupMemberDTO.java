@@ -42,4 +42,13 @@ public class GroupMemberDTO {
         isAdmin = admin;
     }
 
+    public GroupMemberDTO() {
+    }
+
+    public GroupMemberDTO(int userId, String firstName, String lastName, boolean isAdmin) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.isAdmin = isAdmin;
+    }
 }

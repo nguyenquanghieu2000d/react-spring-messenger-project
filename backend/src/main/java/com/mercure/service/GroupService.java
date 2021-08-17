@@ -28,22 +28,30 @@ public class GroupService {
         return groupRepository.findGroupByUrl(url);
     }
 
-    public void addUserToConversation(int userId, int groupId) {
+    public String getGroupName(String url) {
+        return groupRepository.getGroupEntitiesBy(url);
+    }
+
+    public String addUserToConversation(int userId, int groupId) {
         Optional<GroupEntity> groupEntity = groupRepository.findById(groupId);
         if (groupEntity.isPresent() && groupEntity.orElse(null).getGroupTypeEnum().equals(GroupTypeEnum.SINGLE)) {
             log.info("Cannot add user in a single conversation");
-            return;
+            return "";
         }
         UserEntity user = userService.findById(userId);
         GroupUser groupUser = new GroupUser();
         groupUser.setGroupMapping(groupEntity.orElse(null));
         groupUser.setUserMapping(user);
-        groupUser.setId(new GroupRoleKey(groupId, userId));
+//        groupUser.setId(new GroupRoleKey(groupId, userId));
+        groupUser.setGroupId(groupId);
+        groupUser.setUserId(userId);
+
         groupUser.setRole(0);
-        GroupUser saved = groupUserJoinService.save(groupUser);
+//        GroupUser saved = groupUserJoinService.save(groupUser);
         assert groupEntity.orElse(null) != null;
-        groupEntity.orElse(null).getGroupUsers().add(saved);
-        groupRepository.save(groupEntity.orElse(null));
+//        groupEntity.orElse(null).getGroupUsers().add(saved);
+//        groupRepository.save(groupEntity.orElse(null));
+        return user.getFirstName();
     }
 
     public GroupUser createGroup(int userId, String name) {
@@ -57,7 +65,9 @@ public class GroupService {
         GroupRoleKey groupRoleKey = new GroupRoleKey();
         groupRoleKey.setUserId(userId);
         groupRoleKey.setGroupId(savedGroup.getId());
-        groupUser.setId(groupRoleKey);
+//        groupUser.setId(groupRoleKey);
+        groupUser.setGroupId(savedGroup.getId());
+        groupUser.setUserId(userId);
         groupUser.setRole(1);
         groupUser.setUserMapping(user);
         groupUser.setGroupMapping(group);
@@ -79,13 +89,18 @@ public class GroupService {
         UserEntity user2 = userService.findById(id2);
 
         GroupUser groupUser1 = new GroupUser();
-        groupUser1.setId(new GroupRoleKey(savedGroup.getId(), id1));
+//        groupUser1.setId(new GroupRoleKey(savedGroup.getId(), id1));
+        groupUser1.setGroupId(savedGroup.getId());
+        groupUser1.setUserId(id1);
+
         groupUser1.setRole(0);
         groupUser1.setUserMapping(user1);
         groupUser1.setGroupMapping(groupEntity);
 
         GroupUser groupUser2 = new GroupUser();
-        groupUser2.setId(new GroupRoleKey(savedGroup.getId(), id2));
+//        groupUser2.setId(new GroupRoleKey(savedGroup.getId(), id2));
+        groupUser2.setUserId(savedGroup.getId());
+        groupUser2.setGroupId(id2);
         groupUser2.setRole(0);
         groupUser2.setUserMapping(user2);
         groupUser2.setGroupMapping(groupEntity);

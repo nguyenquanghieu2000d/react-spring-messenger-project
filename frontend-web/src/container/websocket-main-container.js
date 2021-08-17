@@ -1,15 +1,10 @@
 import {connect} from 'react-redux'
 import {WebSocketMainComponent} from "../components/websocket/websocket-main-component";
-import {initWsConnection, wsHealthCheckConnected} from "../actions";
+import {initWsConnection, wsHealthCheckConnected} from "../actions/websocket-actions";
 
 const mapStateToProps = (state) => {
-    const {isDarkModeToggled, currentThemeMode} = state.ThemeReducer;
-    const {isUserLoggedIn} = state.AuthReducer;
     const {wsUserTokenValue, wsUserGroups, isWsConnected} = state.WebSocketReducer;
     return {
-        isDarkModeToggled,
-        currentThemeMode,
-        isUserLoggedIn,
         wsUserTokenValue,
         isWsConnected,
         wsUserGroups

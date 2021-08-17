@@ -4,17 +4,17 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 
 const useStyles = makeStyles(() => ({
     labelInput: {
-        color: props => props.isDarkModeEnable ? "white" : "black",
+        color: props => props.isDarkModeEnable === "dark" ? "white" : "black",
     },
     input: {
-        color: props => props.isDarkModeEnable ? "white" : "black",
-        borderColor: props => props.isDarkModeEnable ? "white" : "black",
+        color: props => props.isDarkModeEnable === "dark" ? "white" : "black",
+        borderColor: props => props.isDarkModeEnable === "dark" ? "white" : "black",
     },
     cssLabel: {
-        color: props => props.isDarkModeEnable ? "white" : "black",
+        color: props => props.isDarkModeEnable === "dark" ? "white" : "black",
     },
     cssFocused: {
-        color: props => props.isDarkModeEnable ? "white" : "black",
+        color: props => props.isDarkModeEnable === "dark" ? "white" : "black",
     },
 }));
 

@@ -207,7 +207,7 @@ export const CallWindowComponent = ({
                     <Button onClick={() => handleClose(false)} color="primary">
                         Deny
                     </Button>
-                    <Button onClick={() => handleClose(true)} color="primary" autoFocus>
+                    <Button onClick={() => handleClose(true)} color="primary">
                         Accept
                     </Button>
                 </DialogActions>

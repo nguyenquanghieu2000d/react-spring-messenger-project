@@ -6,6 +6,7 @@ import com.mercure.repository.GroupUserJoinRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +21,14 @@ public class GroupUserJoinService {
 
     public Optional<GroupUser> findById(GroupRoleKey id) {
         return groupUserJoinRepository.findById(id);
+    }
+
+    public List<GroupUser> findAll() {
+        return groupUserJoinRepository.findAll();
+    }
+
+    public List<GroupUser> findAllByGroupId(int groupId) {
+        return groupUserJoinRepository.getAllByGroupId(groupId);
     }
 
     public GroupUser grantUserAdminInConversation(int userIdToDelete, int groupId) {

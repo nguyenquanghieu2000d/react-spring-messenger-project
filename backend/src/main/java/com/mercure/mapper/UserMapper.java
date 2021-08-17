@@ -1,8 +1,10 @@
 package com.mercure.mapper;
 
+import com.mercure.dto.AuthUserDTO;
 import com.mercure.dto.GroupDTO;
 import com.mercure.dto.LightUserDTO;
 import com.mercure.dto.UserDTO;
+import com.mercure.entity.GroupEntity;
 import com.mercure.entity.UserEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,12 +55,9 @@ public class UserMapper {
     }
 
 
-    public LightUserDTO toLightUserDTO(UserEntity userEntity) {
-        LightUserDTO toSend = new LightUserDTO();
-        toSend.setId(userEntity.getId());
-        toSend.setWsToken(userEntity.getWsToken());
-        toSend.setFirstName(userEntity.getFirstName());
-        toSend.setLastName(userEntity.getLastName());
-        return toSend;
+    public AuthUserDTO toLightUserDTO(UserEntity userEntity) {
+        Optional<GroupEntity> groupUrl = userEntity.getGroupSet().stream().findFirst();
+        String val = groupUrl.isPresent() ? groupUrl.get().getUrl() : "";
+        return new AuthUserDTO(userEntity.getId(), userEntity.getFirstName(), val, userEntity.getWsToken());
     }
 }

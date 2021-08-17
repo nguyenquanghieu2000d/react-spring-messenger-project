@@ -1,22 +1,17 @@
 import {connect} from 'react-redux'
 import {CallWindowComponent} from "../components/websocket/call-window-component";
-import {initWsConnection} from "../actions/webSocketActions";
-import {createAnswer, createOffer, sendToServer} from "../actions/webRtcActions";
+import {initWsConnection} from "../actions/websocket-actions";
+import {createAnswer, createOffer, sendToServer} from "../actions/web-rtc-actions";
 
 const mapStateToProps = (state) => {
-    const {isDarkModeToggled, currentThemeMode} = state.ThemeReducer;
-    const {userId} = state.AuthReducer;
     const {wsUserTokenValue, isWsConnected} = state.WebSocketReducer;
     const {webRtcOffer, webRtcAnswer, webRtcCandidate} = state.WebRTCReducer;
     return {
-        isDarkModeToggled,
-        currentThemeMode,
         wsUserTokenValue,
         isWsConnected,
         webRtcAnswer,
         webRtcCandidate,
-        webRtcOffer,
-        userId
+        webRtcOffer
     };
 }
 

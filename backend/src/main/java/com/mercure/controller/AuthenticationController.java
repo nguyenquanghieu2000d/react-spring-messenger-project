@@ -1,5 +1,6 @@
 package com.mercure.controller;
 
+import com.mercure.dto.AuthUserDTO;
 import com.mercure.dto.JwtDTO;
 import com.mercure.dto.LightUserDTO;
 import com.mercure.dto.UserDTO;
@@ -53,7 +54,7 @@ public class AuthenticationController {
     private GroupService groupService;
 
     @PostMapping(value = "/auth")
-    public LightUserDTO createAuthenticationToken(@RequestBody JwtDTO authenticationRequest, HttpServletResponse response) throws Exception {
+    public AuthUserDTO createAuthenticationToken(@RequestBody JwtDTO authenticationRequest, HttpServletResponse response) throws Exception {
         authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
         UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         UserEntity user = userService.findByNameOrEmail(authenticationRequest.getUsername(), authenticationRequest.getUsername());
@@ -81,7 +82,7 @@ public class AuthenticationController {
     }
 
     @GetMapping(value = "/fetch")
-    public LightUserDTO fetchInformation(HttpServletRequest request) {
+    public AuthUserDTO fetchInformation(HttpServletRequest request) {
         return userMapper.toLightUserDTO(getUserEntity(request));
     }
 
