@@ -6,7 +6,7 @@ import ImageIcon from "@material-ui/icons/Image";
 import CustomTextField from "../../design/partials/custom-material-textfield";
 import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
 import React, {useEffect} from "react";
-import ImagePreview from "../../design/partials/image-preview";
+import {ImagePreviewComponent} from "../../design/partials/image-preview";
 import AuthService from "../../service/auth-service";
 import {useThemeContext} from "../../context/theme-context";
 import {useAuthContext} from "../../context/auth-context";
@@ -15,6 +15,7 @@ import {ReduxModel} from "../../model/redux-model";
 import {GroupModel} from "../../model/group-model";
 import {AxiosError} from "axios";
 import {FullMessageModel} from "../../model/full-message-model";
+import {GroupActionEnum} from "./group-action-enum";
 
 interface WebsocketChatComponentType {
     getGroupMessages: (groupUrl: string) => {},
@@ -65,7 +66,7 @@ export const WebSocketChatComponent: React.FunctionComponent<WebsocketChatCompon
         return (
             <div>
                 <img src={message.url} height={"200px"} alt={message.name}
-                     onClick={event => handleImagePreview(event, "OPEN", message.url)}
+                     onClick={() => handleImagePreview(GroupActionEnum.OPEN, message.url)}
                      style={{border: "1px solid #c8c8c8", borderRadius: "7%"}}/>
             </div>
         )
@@ -137,15 +138,18 @@ export const WebSocketChatComponent: React.FunctionComponent<WebsocketChatCompon
         messageEnd?.scrollIntoView({behavior: "auto"});
     }
 
-    function handleImagePreview(event: any, action: string, src: string) {
-        event.preventDefault();
+    function handlePopupState(isOpen: boolean) {
+        setPreviewImageOpen(isOpen)
+    }
+
+    function handleImagePreview(action: string, src: string) {
         switch (action) {
-            case "OPEN":
+            case GroupActionEnum.OPEN:
                 setImgSrc(src)
-                setPreviewImageOpen(true)
+                handlePopupState(true);
                 break;
-            case "CLOSE":
-                setPreviewImageOpen(false)
+            case GroupActionEnum.CLOSE:
+                handlePopupState(false);
                 break;
             default:
                 throw new Error("handleImagePreview failed");
@@ -169,11 +173,9 @@ export const WebSocketChatComponent: React.FunctionComponent<WebsocketChatCompon
                 height: "calc(100% - 56px)",
                 overflowY: "scroll"
             }}>
-                <ImagePreview displayImagePreview={isPreviewImageOpen}
-                              changeDisplayImagePreview={handleImagePreview}
-                              isDarkModeEnable={theme}
-                              imgSrc={imgSrc}
-                />
+                <ImagePreviewComponent imgSrc={imgSrc}
+                                       displayImagePreview={isPreviewImageOpen}
+                                       setDisplayImagePreview={handlePopupState}/>
                 {chatHistory && chatHistory.map((val, index, array) => (
                     <Tooltip
                         key={index}

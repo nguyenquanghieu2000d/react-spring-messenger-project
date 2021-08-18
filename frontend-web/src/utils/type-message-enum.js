@@ -1,1 +1,0 @@
-export const MessageTypeEnum = Object.freeze({"text": 1, "gif": 2, "image": 3})

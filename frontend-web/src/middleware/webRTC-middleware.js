@@ -2,7 +2,6 @@ import {handleAnswer, handleOffer, handleRtCandidate} from "../actions/web-rtc-a
 
 export function handleRTCSubscribeEvents(data, store) {
     console.log(data.type)
-    console.log("data.userIn !== userId ? ", data.name !== 5)
     if (data.name !== 5) {
         if (data.type === "video-offer") {
             console.log("Receiving offer")
@@ -23,28 +22,8 @@ export function handleRTCActions(wsClient, store, payload) {
     const groupUrl = localStorage.getItem("_cAG");
     switch (payload.type) {
         case "init":
-            // if (wsClient !== null) {
-            //     wsClient.subscribe("/topic/call/reply/" + groupUrl, (res) => {
-            //         const data = JSON.parse(res.body);
-            //         console.log(data)
-            //         console.log("data.userIn !== userId ? ", data.userIn !== userId)
-            //         if (data.userIn !== userId) {
-            //             if (data.rtc.event === "offer") {
-            //                 store.dispatch(handleOffer(data))
-            //             }
-            //             if (data.rtc.event === "answer") {
-            //                 store.dispatch(handleAnswer(data))
-            //             }
-            //             if (data.rtc.event === "candidate") {
-            //                 // console.log("CANDIDATE")
-            //                 store.dispatch(handleRtCandidate(data))
-            //             }
-            //         }
-            //     });
-            // }
             break;
         case "offer":
-            console.log("CASE OFFER")
             if (wsClient !== null) {
                 console.log("Sending offer to server...")
                 wsClient.publish({
@@ -76,8 +55,6 @@ export function handleRTCActions(wsClient, store, payload) {
         case "video-offer":
         case "new-ice-candidate":
             if (wsClient !== null) {
-                // console.log(payload.type)
-                // console.log(payload)
                 wsClient.publish({
                     destination: "/app/message/call/" + 5 + "/group/" + groupUrl,
                     body: JSON.stringify(payload)

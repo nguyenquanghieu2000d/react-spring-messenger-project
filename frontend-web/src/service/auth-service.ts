@@ -64,8 +64,8 @@ export default class AuthService {
         return instance.get(API_URL + "user/remove/admin/" + userIdToRemove + "/group/" + groupId);
     }
 
-    grantUserAdminInConversation(userIdToRemove: number, groupId: string) {
-        return instance.get(API_URL + "user/grant/" + userIdToRemove + "/group/" + groupId);
+    grantUserAdminInConversation(userIdToGrant: number | string, groupId: string) {
+        return instance.get(API_URL + "user/grant/" + userIdToGrant + "/group/" + groupId);
     }
 
     uploadFile(data: FormData) {

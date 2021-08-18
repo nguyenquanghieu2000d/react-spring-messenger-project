@@ -16,7 +16,7 @@ const initialState = {
     chatHistory: []
 }
 
-const WebSocketReducer = (state = initialState, action) => {
+const WebSocketReducer = (state = initialState, action: any) => {
     switch (action.type) {
         case INIT_WS_TOKEN:
             return {...state, wsUserTokenValue: action.payload};
@@ -29,7 +29,7 @@ const WebSocketReducer = (state = initialState, action) => {
         case CURRENT_ACTIVE_GROUP:
             return {...state, currentActiveGroup: action.payload};
         case SET_CHAT_HISTORY:
-            return {...state, chatHistory: action.payload}
+            return {...state, chatHistory: action.payload};
         case ADD_CHAT_HISTORY:
             return {
                 ...state,

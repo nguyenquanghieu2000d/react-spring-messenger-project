@@ -2,8 +2,9 @@ import {connect} from 'react-redux'
 import {CallWindowComponent} from "../components/websocket/call-window-component";
 import {initWsConnection} from "../actions/websocket-actions";
 import {createAnswer, createOffer, sendToServer} from "../actions/web-rtc-actions";
+import {Client} from "@stomp/stompjs";
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: any) => {
     const {wsUserTokenValue, isWsConnected} = state.WebSocketReducer;
     const {webRtcOffer, webRtcAnswer, webRtcCandidate} = state.WebRTCReducer;
     return {
@@ -15,12 +16,12 @@ const mapStateToProps = (state) => {
     };
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch: any) => {
     return {
-        setWsObject: (data) => dispatch(initWsConnection(data)),
-        createOffer: (data) => dispatch(createOffer(data)),
-        createAnswer: (data) => dispatch(createAnswer(data)),
-        sendToServer: (data) => dispatch(sendToServer(data))
+        setWsObject: (data: Client) => dispatch(initWsConnection(data)),
+        createOffer: (data: any) => dispatch(createOffer(data)),
+        createAnswer: (data: any) => dispatch(createAnswer(data)),
+        sendToServer: (data: any) => dispatch(sendToServer(data))
     }
 }
 

@@ -6,7 +6,7 @@ const initialState = {
     webRtcCandidate: null
 }
 
-const WebRTCReducer = (state = initialState, action) => {
+const WebRTCReducer = (state = initialState, action: any) => {
     switch (action.type) {
         case HANDLE_RTC_CANDIDATE:
             return {...state, webRtcCandidate: action.payload}

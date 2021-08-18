@@ -1,1 +1,0 @@
-export const TypeGroupEnum = Object.freeze({GROUP: "GROUP", SINGLE: "SINGLE"})

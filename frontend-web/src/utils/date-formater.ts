@@ -1,6 +1,6 @@
 import moment from "moment";
 
-export function dateParser(date) {
+export function dateParser(date: string) {
     const messageDate = moment(date, "YYYY-MM-DD HH:mm:ss").fromNow();
     if (messageDate.includes("year")) {
         return moment(date, "YYYY-MM-DD HH:mm:ss").fromNow(true);

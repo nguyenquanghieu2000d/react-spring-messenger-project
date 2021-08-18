@@ -65,7 +65,7 @@ export const WebsocketGroupsComponent: React.FunctionComponent<WebsocketGroupsCo
 
 
     useEffect(() => {
-        if (wsUserGroups.length !== 0) {
+        if (wsUserGroups) {
             setLoading(false);
         }
     }, [wsUserGroups])

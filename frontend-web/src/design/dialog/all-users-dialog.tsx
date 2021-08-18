@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React from "react";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -33,8 +33,9 @@ export const AllUsersDialog: React.FunctionComponent<AllUsersDialogType> = ({
 
     return (
         <Dialog
-            onBackdropClick={() => setOpen(false)}
-            // onClose={() => this.handleDialogAction(GroupActionEnum.CLOSE)}
+            onClose={(event, reason) => {
+                if (reason === "backdropClick") setOpen(false)
+            }}
             scroll={"paper"}
             aria-labelledby="simple-dialog-title"
             fullWidth

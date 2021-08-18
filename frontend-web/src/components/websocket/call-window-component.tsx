@@ -3,19 +3,28 @@ import CallIcon from "@material-ui/icons/Call";
 import Button from "@material-ui/core/Button";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@material-ui/core";
 
-export const CallWindowComponent = ({
-                                        sendToServer,
-                                        isWsConnected,
-                                        webRtcOffer,
-                                        webRtcAnswer,
-                                        webRtcCandidate,
-                                        userId
-                                    }) => {
+interface CallWindowComponentType {
+    sendToServer: (param: any) => {},
+    isWsConnected: boolean,
+    webRtcOffer: any,
+    webRtcAnswer: RTCSessionDescriptionInit,
+    webRtcCandidate: any,
+    userId: number
+}
+
+export const CallWindowComponent: React.FunctionComponent<CallWindowComponentType> = ({
+                                                                                          sendToServer,
+                                                                                          isWsConnected,
+                                                                                          webRtcOffer,
+                                                                                          webRtcAnswer,
+                                                                                          webRtcCandidate,
+                                                                                          userId
+                                                                                      }) => {
     // let peerConnection = null;
     // const [isMicMuted, setMicStatus] = React.useState(false);
-    const [peerConnection, setPeerConnection] = React.useState(null);
+    const [peerConnection, setPeerConnection] = React.useState<RTCPeerConnection | null>(null);
     const [callingEvent, setCallingEvent] = React.useState(false);
-    const [acceptCall, setAcceptCall] = React.useState(null);
+    const [acceptCall, setAcceptCall] = React.useState<boolean>(false);
 
     const peerConnectionInit = () => {
         return new RTCPeerConnection();
@@ -51,8 +60,8 @@ export const CallWindowComponent = ({
         }
     }, [peerConnection])
 
-    function handleAnswer(answer) {
-        peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+    function handleAnswer(answer: RTCSessionDescriptionInit) {
+        peerConnection?.setRemoteDescription(new RTCSessionDescription(answer));
     }
 
     function initVoiceCall() {
@@ -69,7 +78,7 @@ export const CallWindowComponent = ({
             peerConnection.ontrack = function ({streams: [stream]}) {
                 const remoteVideo = document.getElementById("remote-video");
                 if (remoteVideo) {
-                    remoteVideo.srcObject = stream;
+                    // remoteVideo.srcObject = stream;
                 }
             };
         }
@@ -84,12 +93,11 @@ export const CallWindowComponent = ({
     //     window.close();
     // }
 
-    function handleOffer(msg) {
-        console.log("SOMEONE WANT TO CALL US, ok ?")
+    function handleOffer(msg: any) {
         setCallingEvent(true);
         let ctx = new AudioContext();
         let rtcSessionDescription = new RTCSessionDescription(msg);
-        peerConnection.setRemoteDescription(rtcSessionDescription).then(() => {
+        peerConnection?.setRemoteDescription(rtcSessionDescription).then(() => {
             return navigator.mediaDevices.getUserMedia({audio: true});
         }).then((stream) => {
             let source = ctx.createMediaStreamSource(stream);
@@ -98,9 +106,9 @@ export const CallWindowComponent = ({
             source.connect(gainNode);
             source.connect(ctx.destination)
         }).then(() => {
-            return peerConnection.createAnswer();
+            return peerConnection?.createAnswer();
         }).then((answer) => {
-            return peerConnection.setLocalDescription(answer);
+            return peerConnection?.setLocalDescription(answer);
         }).then(() => {
             let msg = {
                 name: userId,
@@ -130,17 +138,17 @@ export const CallWindowComponent = ({
     // }
 
 
-    async function handleNewICECandidateMsg(msg) {
+    async function handleNewICECandidateMsg(msg: any) {
         let candidate = new RTCIceCandidate(msg.candidate);
         console.log("*** Adding received ICE candidate: " + JSON.stringify(candidate));
         try {
-            await peerConnection.addIceCandidate(candidate)
+            await peerConnection?.addIceCandidate(candidate)
         } catch (err) {
             console.log(err)
         }
     }
 
-    function handleIceCandidate(event) {
+    function handleIceCandidate(event: any) {
         if (event.candidate) {
             console.log("onicecandidate")
             sendToServer({
@@ -154,16 +162,16 @@ export const CallWindowComponent = ({
 
     function handleNegotiationNeededEvent() {
         console.log("handleNegotiationNeededEvent")
-        peerConnection.createOffer().then(function (offer) {
-            peerConnection.createOffer().then(function (offer) {
-                return peerConnection.setLocalDescription(offer);
+        peerConnection?.createOffer().then(function (offer) {
+            peerConnection?.createOffer().then(function (offer) {
+                return peerConnection?.setLocalDescription(offer);
             }).then(function () {
-                console.log(peerConnection.localDescription)
+                console.log(peerConnection?.localDescription)
                 sendToServer({
                     type: "video-offer",
                     name: userId,
                     target: null,
-                    sdp: peerConnection.localDescription
+                    sdp: peerConnection?.localDescription
                 });
             }).catch((err) => {
                 console.log(err)
@@ -171,29 +179,29 @@ export const CallWindowComponent = ({
         })
     }
 
-    function openCallPage(event) {
+    function openCallPage(event: any) {
         event.preventDefault();
         navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
             stream.getTracks().forEach(track => {
                 console.log(track)
-                peerConnection.addTrack(track, stream)
+                peerConnection?.addTrack(track, stream)
             })
         });
         // const callUrl = UUIDv4();
         // window.open("http://localhost:3000/call/" + callUrl, '_blank', "location=yes,height=570,width=520,scrollbars=yes,status=yes");
     }
 
-    function handleClose(value) {
+    function handleClose(value: boolean) {
         return new Promise((resolve) => {
             setAcceptCall(value);
             setCallingEvent(false)
-            resolve();
+            resolve("done");
         })
     }
 
     return (
         <React.Fragment>
-            <Button onClick={event => openCallPage(event)} variant="text" component="span">
+            <Button onClick={(event: any) => openCallPage(event)} variant="text" component="span">
                 <CallIcon/>
             </Button>
             <Dialog open={callingEvent}>

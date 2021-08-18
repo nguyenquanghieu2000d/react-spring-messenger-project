@@ -134,6 +134,7 @@ public class ApiController {
         String cookieToken = cookie.getValue();
         String username = jwtUtil.getUserNameFromJwtToken(cookieToken);
         int groupId = groupService.findGroupByUrl(groupUrl);
+        String userToChange = userService.findUsernameById(userId);
         UserEntity userEntity = userService.findByNameOrEmail(username, username);
         if (userEntity != null) {
             int adminUserId = userEntity.getId();
@@ -143,8 +144,8 @@ public class ApiController {
             if (userService.checkIfUserHasRightToDelete(adminUserId, groupId)) {
                 try {
                     if (action.equals("grant")) {
-                        GroupUser groupUser = groupUserJoinService.grantUserAdminInConversation(userId, groupId);
-                        return ResponseEntity.status(200).body(groupUserMapper.toGroupMemberDTO(groupUser));
+                        groupUserJoinService.grantUserAdminInConversation(userId, groupId);
+                        return ResponseEntity.ok().body(userToChange + " has been granted administrator to " + groupService.getGroupName(groupUrl));
                     }
                     if (action.equals("delete")) {
                         groupUserJoinService.removeUserFromConversation(userId, groupId);

@@ -31,16 +31,16 @@ public class GroupUserJoinService {
         return groupUserJoinRepository.getAllByGroupId(groupId);
     }
 
-    public GroupUser grantUserAdminInConversation(int userIdToDelete, int groupId) {
-        return executeActionOnGroupUser(userIdToDelete, groupId, 1);
+    public GroupUser grantUserAdminInConversation(int userId, int groupId) {
+        return executeActionOnGroupUser(userId, groupId, 1);
     }
 
     public void removeUserAdminFromConversation(int userIdToDelete, int groupId) {
         executeActionOnGroupUser(userIdToDelete, groupId, 0);
     }
 
-    private GroupUser executeActionOnGroupUser(int userIdToDelete, int groupId, int role) {
-        GroupRoleKey groupRoleKey = new GroupRoleKey(groupId, userIdToDelete);
+    private GroupUser executeActionOnGroupUser(int userId, int groupId, int role) {
+        GroupRoleKey groupRoleKey = new GroupRoleKey(groupId, userId);
         Optional<GroupUser> optionalGroupUserToDelete = groupUserJoinRepository.findById(groupRoleKey);
         if (optionalGroupUserToDelete.isPresent()) {
             GroupUser groupUser = optionalGroupUserToDelete.get();

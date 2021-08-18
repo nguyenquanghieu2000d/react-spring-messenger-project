@@ -17,9 +17,8 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.handler.annotation.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
@@ -29,7 +28,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -71,7 +73,7 @@ public class WsController {
      */
     @MessageMapping("/message")
     @SendToUser("/queue/reply")
-    public List<GroupDTO> initUserProfile(String token) {
+    public List<GroupDTO> initUserProfile(String token, @Header("simpSessionId") String sessionId) {
         String username = userService.findUsernameWithWsToken(token);
         if (StringUtils.isEmpty(username)) {
             log.warn("Username not found");

@@ -137,8 +137,12 @@ export const WebSocketGroupActionComponent: React.FunctionComponent<WebsocketGro
 
     }
 
-    function grantUserAdminInConversation(event: any, userId: string | number) {
-
+    function grantUserAdminInConversation(userId: number | string) {
+        new AuthService().grantUserAdminInConversation(userId, groupUrl).then((res) => {
+            setAlerts([...alerts, new FeedbackModel(UUIDv4(), res.data, "success", true)])
+        }).catch(() => {
+            setAlerts([...alerts, new FeedbackModel(UUIDv4(), "Cannot grant user. Please retry later", "error", true)])
+        })
     }
 
     function addUserInConversation(userId: string | number) {
@@ -229,7 +233,7 @@ export const WebSocketGroupActionComponent: React.FunctionComponent<WebsocketGro
                                                             {
                                                                 isCurrentUserAdmin && !value.admin &&
                                                                 <MenuItem
-                                                                    onClick={event => grantUserAdminInConversation(event, value.userId)}
+                                                                    onClick={() => grantUserAdminInConversation(value.userId)}
                                                                     dense={true}>Grant
                                                                     administrator</MenuItem>
                                                             }
